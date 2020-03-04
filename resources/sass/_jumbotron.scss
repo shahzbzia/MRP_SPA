@@ -1,0 +1,66 @@
+$black: #000000;
+
+@media (min-width: 360px) {
+.jumbotron {
+		background: linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url("/public/images/alpina.png") no-repeat center center;
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: over;
+		background-size: cover;
+		height: 25%;
+		position: relative;
+
+		.text{
+  			color: white;
+  			font-size: 0.7rem;
+		}
+	}
+}
+@media (min-width: 1024px) {
+	.jumbotron {
+		background: linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url("/public/images/alpina.png") no-repeat center center;
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: over;
+		background-size: cover;
+		height: 30%;
+		position: relative;
+		font-size: small;
+
+		.extraPadding{
+			padding-top:90px;
+			padding-bottom: 50px;
+
+		}
+
+		.text{
+  			color: white;
+  			font-size: 0.8rem;
+  			position: initial;
+		}
+	}
+}
+@media (min-width: 1200px) {
+	.jumbotron {
+		background: linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url("/public/images/alpina.png") no-repeat center center;
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: over;
+		background-size: cover;
+		height: 50%;
+		position: relative;
+		font-size: medium;
+		min-height: 468.5px;
+
+		.extraPadding{
+			padding-top: 100px;
+			padding-bottom: 80px;
+		}
+
+		.text{
+  			color: white;
+  			font-size: initial;
+  			position: initial;
+		}
+	}
+}
