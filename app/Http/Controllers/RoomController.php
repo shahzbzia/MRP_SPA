@@ -14,6 +14,8 @@ use App\Http\Resources\RoomCollection;
 use App\Imports\RoomsImport;
 use Carbon;
 use Illuminate\Support\Facades\Cookie;
+use Auth;
+use App\User;
 
 class RoomController extends Controller
 {
@@ -328,5 +330,23 @@ class RoomController extends Controller
             "data" => $rooms], 200);
 
     }
+
+    public function apiRoomInfo(Request $request, $id)
+    {
+
+        $room = Room::where('id', $id)->firstOrFail();
+        $user = Auth::user();
+        $otherUsers = User::all()->except(Auth::id());
+
+        return response()->json([
+            "success" => true,
+            "data" => $room,
+            "user" => $user,
+            "otherUsers" => $otherUsers,
+        ], 200);
+
+    }
+
+
 
 }

@@ -21,7 +21,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <body>
-        {{-- <div id="results" class="full-width mt-5 text-center"></div> --}}
         <div id="app">
             <router-view></router-view>
         </div>

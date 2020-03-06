@@ -172,4 +172,28 @@ class UserController extends Controller
     {
         return view('users.invite');
     }
+
+    public function apiGetUserData()
+    {
+
+        $user = Auth::user();
+
+        return response()->json([
+            "success" => true,
+            "user" => $user,
+        ], 200);
+
+    }
+
+    public function apiUpdateUserData(EditUserRequest $request)
+    {
+
+        $user = Auth::user();
+
+        $input = $request->all();
+
+        $user->update($input);
+
+        return response()->json('User updated successfully');
+    }
 }

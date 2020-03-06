@@ -302,4 +302,30 @@ class BookingController extends Controller
 
     }
 
+    public function recieveData(Request $request){
+
+        $start_time = $request->start_time;
+        $end_time = $request->end_time;
+        $date = $request->date;
+        $linked_users = $request->linked_user;
+
+        Booking::create([
+
+            'user_id' => $request->user_id,
+            'room_id' => $request->room_id,
+            'date' => $request->date,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'linked_users' => $request->linked_user,
+
+        ]);
+
+
+        //dd($start_time, $end_time, $date, $linked_users);
+
+
+
+        return response()->json('The booking was successfully made');
+    }
+
 }

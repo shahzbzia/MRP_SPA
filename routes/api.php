@@ -46,3 +46,11 @@ Route::get('/api', 'RoomController@api')->name('api')->middleware('auth:api');
 Route::get('/rooms', 'RoomController@apiShowRooms');
 
 Route::get('/rooms/{id}/booking/create', 'BookingController@bookRooms');
+
+Route::get('/rooms/{id}', 'RoomController@apiRoomInfo');
+
+Route::post('/booking/store', 'BookingController@recieveData');
+
+Route::get('/edit/profile', 'UserController@apiGetUserData');
+
+Route::post('/edit/profile/update', 'UserController@apiUpdateUserData');

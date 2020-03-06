@@ -3,6 +3,7 @@ import About from './components/About';
 import Login from './components/Login';
 import Index from './components/Index';
 import CreateBooking from './components/CreateBooking';
+import EditProfile from './components/EditProfile';
 
 	function getCookie(cname) {
       var name = cname + "=";
@@ -32,6 +33,7 @@ export default {
 		{
 			path: '/' + locale,
 			component: Index,
+      name: 'landingPage',
 		},
 		{
 			path: '/' + locale + '/about',
@@ -45,6 +47,11 @@ export default {
       path: '/' + locale + '/room/:id/booking/create',
       name: 'book',
       component: CreateBooking,
+    },
+    {
+      path: '/' + locale + '/edit/profile',
+      component: EditProfile,
+      name: 'editProfile',
     },
 	]
 

@@ -70,16 +70,16 @@
                             @endif --}}
                         @else
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <a id="navbarDropdown app" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 
-                                    <a class="dropdown-item" href="{{ route('user.dashboard', app()->getLocale()) }}">My Bookings</a>
+                                    <a id="app" class="dropdown-item" href="{{ route('user.dashboard', app()->getLocale()) }}">My Bookings</a>
                                     
-
-                                    <a class="dropdown-item" href="{{ route('showUserEditForm', [app()->getLocale(), Auth::user()->id]) }}">{{ __('auth.Edit Profile') }}</a>
+                                    <router-link :to="{ name: 'editProfile'}"><a class="dropdown-item">{{ __('auth.Edit Profile') }}</a></router-link>
+                                    
 
                                     @if (Auth::check() && Auth::user()->checkRole()==1)   
                                         <form class="mb-0" action="{{ route('deactivateUser', [app()->getLocale(), Auth::user()->id]) }}" method="POST">
@@ -232,6 +232,7 @@
 
             @else
                 @yield('content')
+
             @endif
         </div>
         </main>
