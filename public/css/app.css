@@ -11048,7 +11048,7 @@ a.text-dark:focus {
 
 @media (min-width: 360px) {
   .jumbotron {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("/public/images/alpina.png") no-repeat center center;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("/images/alpina.png") no-repeat center center;
     background-size: cover;
     height: 25%;
     position: relative;
@@ -11062,7 +11062,7 @@ a.text-dark:focus {
 
 @media (min-width: 1024px) {
   .jumbotron {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("/public/images/alpina.png") no-repeat center center;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("/images/alpina.png") no-repeat center center;
     background-size: cover;
     height: 30%;
     position: relative;
@@ -11083,7 +11083,7 @@ a.text-dark:focus {
 
 @media (min-width: 1200px) {
   .jumbotron {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("/public/images/alpina.png") no-repeat center center;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("/images/alpina.png") no-repeat center center;
     background-size: cover;
     height: 50%;
     position: relative;

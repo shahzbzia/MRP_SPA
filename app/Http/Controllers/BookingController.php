@@ -206,17 +206,13 @@ class BookingController extends Controller
     public function userDashboard()
     {
 
-    	$user_id = Auth::user()->id;
+        $user_id = Auth::user()->id;
 
         $json = Booking::whereNotNull('linked_users')->get();
 
-    	$bookings = new Collection(Booking::where('user_id', $user_id)->where('deleted_at', null)->orderBy('created_at', 'desc')->get());
+        $bookings = Booking::where('user_id', $user_id)->orWhere('linked_users', 'like', '%' . $user_id . '%')->where('deleted_at', null)->orderBy('created_at', 'desc')->get();
 
-        $linkedUsers = new Collection(Booking::whereNotNull('linked_users')->where('user_id', '<>', $user_id)->where('deleted_at', null)->orderBy('created_at', 'desc')->get());
-
-        $merged = $bookings->merge($linkedUsers);
-
-    	return view('home')->with('bookings', $merged);
+        return view('home')->with('bookings', $bookings);
 
     }
 
@@ -302,30 +298,262 @@ class BookingController extends Controller
 
     }
 
-    public function recieveData(Request $request){
+    public function apiCreateBooking(CreateBookingRequest $request){
 
-        $start_time = $request->start_time;
-        $end_time = $request->end_time;
+        $room = Room::where('id', $request->room_id)->firstOrFail();
+
+        $user = Auth::user();
+
+        $startTime = $request->start_time;
+
+        $endTime = $request->end_time;
+
+        $to_name = $user->name;
+
+        $to_email = $user->email;
+
+        $roomName = $room->name;
+
         $date = $request->date;
-        $linked_users = $request->linked_user;
 
-        Booking::create([
+        $eventStart = $date . ' ' . $startTime;
 
-            'user_id' => $request->user_id,
-            'room_id' => $request->room_id,
-            'date' => $request->date,
-            'start_time' => $request->start_time,
-            'end_time' => $request->end_time,
-            'linked_users' => $request->linked_user,
+        $eventEnd = $date . ' ' . $endTime;
 
-        ]);
+        $from = DateTime::createFromFormat('Y-m-d H:i', $eventStart);
+
+        $to = DateTime::createFromFormat('Y-m-d H:i', $eventEnd);
+
+        $link = Link::create($room->name, $from, $to)
+            ->address('Ankerrui-2,-2018-Antwerpen' . '-' . $room->location);
+
+        $linkedUsers = '';
+
+        $linkedUsersEmails = '';
+
+        $linkedUsersEmailsArray = null;
+
+        $bookings = Booking::where('date', '=', $request->date)->where('room_id', $room->id)->where(function ($query) use($startTime, $endTime){
+            $query->where([
+                ['start_time', '>=', $startTime],
+                ['start_time', '<', $endTime],
+            ])->orWhere([
+                ['start_time', '<=', $startTime],
+                ['end_time', '>', $startTime],
+            ]);
+        })->count();
+
+        if($bookings == 0)
+        {
+
+            if (now('CET')->format('Y-m-d') == $date && now('CET')->format('H:i') > $startTime) 
+            {
+                return response()->json([
+                    "message" => "You cant book a room in the past!"
+                ], 500);
+            }
+
+            else
+            {
+                //$json_array = json_encode();
+                
+                Booking::create([
+
+                    'user_id' => $user->id,
+                    'room_id' => $room->id,
+                    'date' => $request->date,
+                    'start_time' => $request->start_time,
+                    'end_time' => $request->end_time,
+                    'linked_users' => $request->linked_user,
+
+                ]);
+
+                Storage::disk('local')->put( Str::random(30) . '.ics', $link->ics());
+        
+                $data['ics'] = $link->ics();
+
+                if ($request->linked_user == '[]') 
+                {
+                    $linkedUsers = null;
+
+                    //Mail::to($to_email)->send(new BookingConfirmation($to_name, $roomName, $startTime, $endTime, $date, $linkedUsers, $data['ics']));
+                }
+                else
+                {
+                    foreach ($request->linked_user as $u) 
+                    {
+                        $linkedUsers .= User::where('id', $u)->value('name') . ', ';
+                        $linkedUsersEmails .= User::where('id', $u)->value('email') . ', ';
+                    }
+                    $linkedUsers = trim($linkedUsers, ', ');
+                    $linkedUsersEmails = trim($linkedUsersEmails, ', ');
+                    $linkedUsersEmailsArray = explode(", ", $linkedUsersEmails);
+
+                    //Mail::to($to_email)->cc($linkedUsersEmailsArray)->send(new BookingConfirmation($to_name, $roomName, $startTime, $endTime, $date, $linkedUsers, $data['ics']));
+                }
+
+                if (App::environment('production')) 
+                {
+                    Notification::send($user, new BookingNotification($to_name, $roomName, $startTime, $endTime, $date, $linkedUsers));
+                }
+
+                return response()->json([
+                    "success" => true,
+                    "message" => "Booking made successfully!",
+                ]);
+            }
+
+        }
 
 
-        //dd($start_time, $end_time, $date, $linked_users);
+        return response()->json([
+            "success" => false,
+            "message" => 'Booking already exists during these hours!',
+        ], 500);
+    }
+
+    public function apiGetBookingsList(){
+
+        $user = Auth::user();
+        $bookings = Booking::with('user')->with('room')->where('user_id', $user->id)->orWhere('linked_users', 'like', '%' . $user->id . '%')->where('deleted_at', null)->orderBy('created_at', 'desc')->get();
+
+        //dd($user->id, $bookings);
+
+        return response()->json([
+            "success" => true,
+            "user" => $user,
+            "bookings" => $bookings,
+        ], 200);
+
+    }
+
+    public function apiDeleteBooking($id)
+    {
+        $booking = Booking::whereId($id);
+        $booking->forceDelete();
+
+        return response()->json('The booking was successfully deleted');
+    }
+
+    public function apiExtendBooking($id)
+    {
+        $booking = Booking::with('user')->with('room')->where('id', $id)->firstOrFail();
+
+        $bookedSlots = Booking::where('room_id', $booking->room_id)->where('date', '=', $booking->date)->orderBy('start_time', 'asc')->get();
+
+        $slots = '';
+
+        foreach ($bookedSlots as $b) {
+            $slots .= $b->start_time . ' - ' . $b->end_time . ' | ';
+        }
+        $slots = trim($slots, ' | ');
+
+        //dd($slots);
+
+        return response()->json([
+            "success" => true,
+            "data" => $booking,
+            "slots" => $slots,
+        ], 200);
+    }
+
+    public function apiExtendBookingUpdate(ExtendBookingFormRequest $request, $id)
+    {
+        $endTime = $request->end_time;
+
+        $startTime = $request->start_time;
+
+        $user_id = $request->user_id;
+
+        $room_id = $request->room_id;
+
+        $date = $request->date;
 
 
+        //$startTime = Booking::where('id', $id)->value('start_time');
 
-        return response()->json('The booking was successfully made');
+        if ($startTime >= $endTime) 
+        {
+
+            return response()->json([
+                "message" => "End time needs to be greater then the start time!"
+            ], 500);
+
+        }
+
+        $bookings = Booking::where('date', '=', $date)
+            ->where('room_id', $room_id)
+            ->where('id', '!=', $id)
+            ->where([
+                ['start_time', '>', $startTime],
+                ['start_time', '<', $endTime],
+            ])
+            ->count();
+
+        if($bookings == 0)
+        {
+
+            Booking::whereId($id)->update([
+
+                'end_time' => $request->end_time,
+
+            ]);
+
+            return response()->json([
+                "success" => true,
+                "message" => "Booking extended successfully",
+            ], 200);
+
+        }
+
+        else
+        {
+
+            return response()->json([
+                "success" => false,
+                "message" => 'Booking already exists during these hours!',
+            ], 500);
+
+        }
+
+    }
+
+    public function apiGetBookedSlots(Request $request){
+
+        $date = $request->get('date');
+
+        $room_id = $request->get('room_id');
+
+        $slots = '';
+
+        $bookedSlots = Booking::where('room_id', $room_id)->where('date', '=', $date)->orderBy('start_time', 'asc')->get();
+
+        if ($bookedSlots->count() == 0 ) {
+            
+            $slots .= '/';
+
+            return response()->json([
+                "success" => true,
+                "slots" => $slots,
+            ], 200);
+        }
+
+        if ($bookedSlots->count() > 0 ) {
+
+            foreach ($bookedSlots as $b) {
+                $slots .= $b->start_time . ' - ' . $b->end_time . ' | ';
+            }
+            $slots = trim($slots, ' | ');
+
+            //dd($slots);
+
+            return response()->json([
+                "success" => true,
+                "slots" => $slots,
+            ], 200);
+
+        }
+
     }
 
 }

@@ -75,9 +75,9 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-
-                                    <a id="app" class="dropdown-item" href="{{ route('user.dashboard', app()->getLocale()) }}">My Bookings</a>
                                     
+                                    <router-link :to="{ name: 'myBookings'}"> <a class="dropdown-item">My Bookings</a> </router-link>
+
                                     <router-link :to="{ name: 'editProfile'}"><a class="dropdown-item">{{ __('auth.Edit Profile') }}</a></router-link>
                                     
 

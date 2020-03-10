@@ -1,13 +1,17 @@
 <template>
-     <div class="card card-default">
+ <div id="app" class="card card-default">
 	
-		<div class="card-header">
-			Bookings
+		<div class="card-header d-flex justify-content-md-between">
+			
+			Create bookings
+
+			<router-link :to="{ name: 'landingPage'}" class="btn btn-sm btn-dark ml-2"> Back </router-link>
+
 		</div>
 
 	<div class="card-body">
 
-		<form @submit.prevent="sendData">
+		<form @submit.prevent="sendData" @click="errors.clear($event.target.name)">
 			<div class="form-group">
 				
 				<h5>Room : {{ room.name }}</h5>
@@ -16,7 +20,7 @@
 
 			<div class="form-group">
 
-				<h5>Booked time slots : </h5>
+				<h5 v-text>Booked time slots : {{ slots }}</h5>
 
 			</div>
 
@@ -30,9 +34,11 @@
 
 				<label for="date">Date </label>
 
-				<!-- <input type="date" id="date" class="form-control" name="date" value="" required> -->
+				<input type="date" id="date" class="form-control" name="date" v-model="date" @change="dateChanged" required>
+				
+				<span class="text-danger" v-if="errors.has('date')"> {{ errors.get('date') }}</span>
 
-				<date-picker v-model="date" :disabled-date="notBeforeToday" type="date" value-type="format" @change="dateChanged"> </date-picker>
+				<!-- <date-picker v-model="date" :disabled-date="notBeforeToday" value-type="DD-MM-YYYY" @change="dateChanged" required> </date-picker> -->
 				
 			</div>
 
@@ -43,6 +49,8 @@
 				
 				<input v-model="booking.start_time" type="time" id="start_time" class="form-control" name="start_time" value="" required>
 
+				<span class="text-danger" v-if="errors.has('start_time')">{{ errors.get('start_time') }}</span>
+
 			</div>
 
 			<div class="form-group">
@@ -50,6 +58,8 @@
 				<label for="end_time">End Time</label>
 				
 				<input v-model="booking.end_time" show-hour="false" type="time" id="end_time" class="form-control" name="end_time" value="" required>
+
+				<span class="text-danger" v-if="errors.has('end_time')">{{ errors.get('end_time') }}</span>
 
 			</div>
 
@@ -69,8 +79,6 @@
 				
 				<button class="btn btn-sm btn-dark" type="submit"> Submit </button>
 
-				<a href="" class="btn btn-sm btn-outline-dark ml-2">Cancel</a>
-
 			</div>
 
 		</form>
@@ -81,25 +89,60 @@
 </template>
 
 <script>
-	import DatePicker from 'vue2-datepicker';
-	import 'vue2-datepicker/index.css';
+	class Errors{
 
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
+		constructor() {
+
+			this.errors = {};
+
+		}
+
+		get(field) {
+
+			if (this.errors[field]){
+
+				return this.errors[field][0];
+
+			}
+
+		}
+
+		record(errors){
+
+			this.errors = errors;
+
+		}
+
+		clear(field){
+
+			delete this.errors[field];
+
+		}
+
+		has(field){
+
+			return this.errors.hasOwnProperty(field);
+
+		}
+
+	}
 
 
 
     export default {
-    	components: { DatePicker },
     	data() {
             return {
 
                 room: [],
                 user: [],
-                date: new Date(),
+                date: '',
                 booking: {},
                 otherUsers: [],
                 linkedUsers: [],
+                timestamp: '',
+                errors: new Errors(),
+                message: '',
+                slots: '',
 
             }
         },
@@ -111,22 +154,26 @@
                     this.room = response.data.data;
                     this.user = response.data.user;
                     this.otherUsers = response.data.otherUsers;
+            });
 
-                    //console.log(this.otherUsers);
-                });
         },
 
         methods: {
         	dateChanged: function(){
-        		//console.log();
+        		console.log(this.date, this.room.id);
+
+        		this.axios
+	                .post(`/api/get/booking/slots`, 
+	                	{date: this.date, 
+                    	 room_id: this.room.id})
+	                .then((response) => {
+	                	this.slots = response.data.slots,
+	                	console.log(this.slots)
+	            });
+
         	},
 
-        	notBeforeToday(date) {
-		      return date < today;
-		    },
-
         	sendData() {
-        		console.log(this.booking, this.date, this.room.id, this.user.id, this.linkedUsers);
                 this.axios
                     .post('/api/booking/store', 
                     	{start_time : this.booking.start_time, 
@@ -136,12 +183,25 @@
                     	 user_id: this.user.id,
                     	 linked_user: this.linkedUsers})
                     .then(response => (
-                        this.$router.push({name: 'landingPage'}),
-                        console.log('response.data')
+                    	
+                    	this.$router.push({name: 'landingPage'}),
+
+                    	console.log(response.data.message)
+
                     ))
-                    .catch(error => console.log(error))
-                    .finally(() => this.loading = false)   
-            }
-        }
+
+                    .catch(error => {
+					    if (error.response.status == 422) {
+					        this.errors.record(error.response.data.errors);
+					    }
+
+					    else {
+					    	alert(error.response.data.message)
+					    }
+					});
+            },
+
     }
+
+}
 </script>

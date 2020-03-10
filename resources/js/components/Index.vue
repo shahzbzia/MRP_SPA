@@ -1,8 +1,8 @@
     <template>
     
     <div class="row" id="ads">
-        <div>
-            <div v-for="room in rooms" :key="room.id"class="card rounded h-50 w-50">
+        <div class="d-flex justify-content-around">
+            <div v-for="room in rooms" :key="room.id" class="card rounded h-50 w-50">
                 <router-link :to="{name: 'book', params: { id: room.id }}" class="noDecor">
                     <div class="card-image">
                         <img class="img-fluid" :src="getImage(room.image)">

@@ -4,6 +4,9 @@ import Login from './components/Login';
 import Index from './components/Index';
 import CreateBooking from './components/CreateBooking';
 import EditProfile from './components/EditProfile';
+import MyBookings from './components/MyBookings';
+import ExtendBooking from './components/ExtendBooking';
+
 
 	function getCookie(cname) {
       var name = cname + "=";
@@ -19,7 +22,7 @@ import EditProfile from './components/EditProfile';
         }
       }
       return "";
-    }
+  }
 
   var locale = getCookie('lang');
 
@@ -39,10 +42,10 @@ export default {
 			path: '/' + locale + '/about',
 			component: About,
 		},
-    {
-      path: '/' + locale + '/signin',
-      component: Login,
-    },
+    // {
+    //   path: '/' + locale + '/signin',
+    //   component: Login,
+    // },
     {
       path: '/' + locale + '/room/:id/booking/create',
       name: 'book',
@@ -52,6 +55,16 @@ export default {
       path: '/' + locale + '/edit/profile',
       component: EditProfile,
       name: 'editProfile',
+    },
+    {
+      path: '/' + locale + '/my/bookings',
+      component: MyBookings,
+      name: 'myBookings',
+    },
+    {
+      path: '/' + locale + '/room/booking/edit/:id',
+      component: ExtendBooking,
+      name: 'extendBooking',
     },
 	]
 

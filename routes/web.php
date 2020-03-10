@@ -22,7 +22,7 @@ Route::group(['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'm
 
 Auth::routes(['verify' => true]);
 
-Route::get('/recieveData', 'BookingController@recieveData');
+Route::get('/test/{id}', 'BookingController@apiExtendBooking');
 
 Route::get('register', 'Auth\RegisterController@showRegistrationForm')->middleware('hasInvitation')->name('register');
 
