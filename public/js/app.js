@@ -2089,17 +2089,18 @@ function () {
     dateChanged: function dateChanged() {
       var _this2 = this;
 
-      console.log(this.date, this.room.id);
+      //console.log(this.date, this.room.id);
       this.axios.post("/api/get/booking/slots", {
         date: this.date,
         room_id: this.room.id
       }).then(function (response) {
-        _this2.slots = response.data.slots, console.log(_this2.slots);
+        _this2.slots = response.data.slots; //console.log(this.slots)
       });
     },
     sendData: function sendData() {
       var _this3 = this;
 
+      var that = this;
       this.axios.post('/api/booking/store', {
         start_time: this.booking.start_time,
         end_time: this.booking.end_time,
@@ -2108,9 +2109,11 @@ function () {
         user_id: this.user.id,
         linked_user: this.linkedUsers
       }).then(function (response) {
-        return _this3.$router.push({
-          name: 'landingPage'
-        }), console.log(response.data.message);
+        return setTimeout(function () {
+          return that.$router.push({
+            name: 'landingPage'
+          });
+        }, 200), alert('Room booked successfully');
       })["catch"](function (error) {
         if (error.response.status == 422) {
           _this3.errors.record(error.response.data.errors);
@@ -2231,16 +2234,14 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     this.axios.get("/api/edit/profile").then(function (response) {
-      _this.user = response.data.user; //console.log(this.user);
+      _this.user = response.data.user;
     });
   },
   methods: {
-    dateChanged: function dateChanged() {//console.log();
-    },
     updateProfile: function updateProfile() {
       var _this2 = this;
 
-      //console.log(this.booking, this.date, this.room.id, this.user.id, this.linkedUsers);
+      var that = this;
       this.axios.post('/api/edit/profile/update', {
         name: this.user.name,
         street: this.user.street,
@@ -2249,10 +2250,11 @@ __webpack_require__.r(__webpack_exports__);
         city: this.user.city,
         country: this.user.country
       }).then(function (response) {
-        return _this2.$router.push({
-          name: 'landingPage'
-        }) //console.log('response.data')
-        ;
+        return setTimeout(function () {
+          return that.$router.push({
+            name: 'landingPage'
+          });
+        }, 200), alert('Profile update sucessfully');
       })["catch"](function (error) {
         return console.log(error);
       })["finally"](function () {
@@ -2413,6 +2415,7 @@ function () {
     updateBooking: function updateBooking() {
       var _this2 = this;
 
+      var that = this;
       this.axios.post("/api/user/dashboard/extend/store/".concat(this.$route.params.id), {
         end_time: this.booking.end_time,
         date: this.booking.date,
@@ -2420,9 +2423,11 @@ function () {
         user_id: this.booking.user.id,
         start_time: this.booking.start_time
       }).then(function (response) {
-        return _this2.$router.push({
-          name: 'landingPage'
-        });
+        return setTimeout(function () {
+          return that.$router.push({
+            name: 'landingPage'
+          });
+        }, 200), alert('Booking extended sucessfully');
       })["catch"](function (error) {
         if (error.response.status == 422) {
           _this2.errors.record(error.response.data.errors);
@@ -2729,6 +2734,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
         _this2.bookings.splice(i, 1);
+
+        setTimeout(function () {
+          return alert('Booking deleted successfully');
+        }, 200);
       });
     }
   }

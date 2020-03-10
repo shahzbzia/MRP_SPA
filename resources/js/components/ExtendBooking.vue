@@ -6,7 +6,7 @@
 			Extend bookings
 
 			<router-link :to="{ name: 'myBookings'}" class="btn btn-sm btn-dark ml-2"> Back </router-link>
-			
+
 		</div>
 
 	<div class="card-body">
@@ -141,6 +141,8 @@
 
         	updateBooking() {
 
+        		var that = this;
+
         		this.axios
                     .post(`/api/user/dashboard/extend/store/${this.$route.params.id}`, 
                     	{end_time : this.booking.end_time,
@@ -150,7 +152,9 @@
                     	 start_time: this.booking.start_time,})
                     .then(response => (
                     	
-                    	this.$router.push({name: 'landingPage'})
+                    	setTimeout(() => that.$router.push({name: 'landingPage'}), 200),
+
+                    	alert('Booking extended sucessfully')
 
                     ))
 

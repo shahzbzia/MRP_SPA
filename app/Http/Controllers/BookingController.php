@@ -545,8 +545,6 @@ class BookingController extends Controller
             }
             $slots = trim($slots, ' | ');
 
-            //dd($slots);
-
             return response()->json([
                 "success" => true,
                 "slots" => $slots,

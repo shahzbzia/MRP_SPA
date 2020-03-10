@@ -90,9 +90,7 @@
     export default {
         data() {
             return {
-
                 user: [],
-
             }
         },
         created() {
@@ -101,18 +99,14 @@
                 .get(`/api/edit/profile`)
                 .then((response) => {
                     this.user = response.data.user;
-
-                    //console.log(this.user);
                 });
         },
 
         methods: {
-            dateChanged: function(){
-                //console.log();
-            },
 
             updateProfile() {
-                //console.log(this.booking, this.date, this.room.id, this.user.id, this.linkedUsers);
+                var that = this;
+
                 this.axios
                     .post('/api/edit/profile/update',
                         {name : this.user.name, 
@@ -122,8 +116,9 @@
                          city : this.user.city,
                          country : this.user.country})
                     .then(response => (
-                        this.$router.push({name: 'landingPage'})
-                        //console.log('response.data')
+                        setTimeout(() => that.$router.push({name: 'landingPage'}), 200),
+
+                        alert('Profile update sucessfully')
                     ))
                     .catch(error => console.log(error))
                     .finally(() => this.loading = false)   

@@ -160,20 +160,22 @@
 
         methods: {
         	dateChanged: function(){
-        		console.log(this.date, this.room.id);
+        		//console.log(this.date, this.room.id);
 
         		this.axios
 	                .post(`/api/get/booking/slots`, 
 	                	{date: this.date, 
                     	 room_id: this.room.id})
 	                .then((response) => {
-	                	this.slots = response.data.slots,
-	                	console.log(this.slots)
+	                	this.slots = response.data.slots
+	                	//console.log(this.slots)
 	            });
 
         	},
 
         	sendData() {
+
+        		var that = this;
                 this.axios
                     .post('/api/booking/store', 
                     	{start_time : this.booking.start_time, 
@@ -183,10 +185,10 @@
                     	 user_id: this.user.id,
                     	 linked_user: this.linkedUsers})
                     .then(response => (
-                    	
-                    	this.$router.push({name: 'landingPage'}),
 
-                    	console.log(response.data.message)
+                    	setTimeout(() => that.$router.push({name: 'landingPage'}), 200),
+
+                    	alert('Room booked successfully')
 
                     ))
 

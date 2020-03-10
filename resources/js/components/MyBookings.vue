@@ -146,7 +146,11 @@
                     .delete(`/api/user/dashboard/delete/${id}`)
                     .then(response => {
                         let i = this.bookings.map(item => item.id).indexOf(id); // find index of your object
-                        this.bookings.splice(i, 1)
+                        this.bookings.splice(i, 1);
+
+                        setTimeout(() => alert('Booking deleted successfully'), 200);
+
+                        
                     });
             },
 
