@@ -298,6 +298,11 @@ class BookingController extends Controller
 
     }
 
+
+    /*---------------------------------------------------------------SPA FUNCTIONS-------------------------------------------------------------------*/
+
+    
+
     public function apiCreateBooking(CreateBookingRequest $request){
 
         $room = Room::where('id', $request->room_id)->firstOrFail();

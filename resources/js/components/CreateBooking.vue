@@ -37,8 +37,6 @@
 				<input type="date" id="date" class="form-control" name="date" v-model="date" @change="dateChanged" required>
 				
 				<span class="text-danger" v-if="errors.has('date')"> {{ errors.get('date') }}</span>
-
-				<!-- <date-picker v-model="date" :disabled-date="notBeforeToday" value-type="DD-MM-YYYY" @change="dateChanged" required> </date-picker> -->
 				
 			</div>
 

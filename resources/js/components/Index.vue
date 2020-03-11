@@ -42,7 +42,7 @@
                 .get('/api/rooms')
                 .then(response => {
                     this.rooms = response.data.data;
-                    console.log(locale);
+                    //console.log(locale);
                 });
         },
 

@@ -1,11 +1,9 @@
-import Home from './components/Home';
-import About from './components/About';
-import Login from './components/Login';
 import Index from './components/Index';
 import CreateBooking from './components/CreateBooking';
 import EditProfile from './components/EditProfile';
 import MyBookings from './components/MyBookings';
 import ExtendBooking from './components/ExtendBooking';
+import PageNotFound from './components/PageNotFound';
 
 
 	function getCookie(cname) {
@@ -38,14 +36,6 @@ export default {
 			component: Index,
       name: 'landingPage',
 		},
-		{
-			path: '/' + locale + '/about',
-			component: About,
-		},
-    // {
-    //   path: '/' + locale + '/signin',
-    //   component: Login,
-    // },
     {
       path: '/' + locale + '/room/:id/booking/create',
       name: 'book',
@@ -65,6 +55,11 @@ export default {
       path: '/' + locale + '/room/booking/edit/:id',
       component: ExtendBooking,
       name: 'extendBooking',
+    },
+    {
+      path: '/' + locale + '*',
+      component: PageNotFound,
+      name: 'pageNotFound',
     },
 	]
 
