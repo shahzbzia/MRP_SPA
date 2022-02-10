@@ -16,7 +16,7 @@
     "jquery": "^3.2",
     "laravel-mix": "^4.1.4",
     "lodash": "^4.17.13",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "resolve-url-loader": "^2.3.1",
     "sass": "^1.26.1",
     "sass-loader": "^7.3.1",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@popperjs/core": "^2.0.6",
     "bootstrap-sass": "^3.4.1",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "popper.js": "^1.14.3",
     "reinstall": "^2.0.0",
     "vue-axios": "^2.1.5",
